@@ -1,0 +1,5 @@
+gem 'nokogiri'
+gem 'httparty'
+gem 'json'
+gem 'pry'
+gem 'watir'
