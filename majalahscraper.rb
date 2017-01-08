@@ -4,19 +4,25 @@ require 'watir'
 require 'pry'
 require 'csv'
 
+########################
+pages_to_iterate = 2
+########################
+
 main_link = "http://majalah.com"
 feed_links = []
 phone_number = []
+page = 1
 
 browser = Watir::Browser.new :chrome
 
-#page.1
-page = 1
 
-2.times.each do |i|
+
+pages_to_iterate.times.each do |i|
 	browser.goto 'http://www.majalah.com/?allclassifieds.page.' + page.to_s
 	
-	puts page
+	puts "start page " + page.to_s
+
+	puts "\nstoring links from page"
 
 	browser.div(:id => "contentLeft").div(:class => "vertiPad").bs.each_with_index do |i,index|
 		if index < 50
@@ -25,13 +31,17 @@ page = 1
 		print "."
 	end
 
-	puts "finish populate feed_links"
+	
+
+	puts "\nscanning phone numbers"
 
 	feed_links.each_with_index do |link,index|
 		print "."
 		browser.goto link
 		phone_number << browser.text.scan(/(?=(01|\+60))(((?:[0-9]( |-)?){7,10}[0-9]|\d{7,10}))/m).flatten - [nil] - ["-"] - ["01"] - ["0"] - [" "]
 	end
+
+	puts "\nscanning phone numbers"
 
 	phone_number.flatten!.sort!
 
