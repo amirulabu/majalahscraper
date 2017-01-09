@@ -1,16 +1,16 @@
 #Phone number Scraper for Majalah dot com using watir
 
 require 'watir'
-require 'pry'
+#require 'pry'
 require 'csv'
 
 ########################
-pages_to_iterate = 2
+pages_to_iterate = 50
 ########################
 
 main_link = "http://majalah.com"
-feed_links = []
-phone_number = []
+
+
 page = 1
 
 browser = Watir::Browser.new :chrome
@@ -18,6 +18,8 @@ browser = Watir::Browser.new :chrome
 
 
 pages_to_iterate.times.each do |i|
+	phone_number = []
+	feed_links = []
 	browser.goto 'http://www.majalah.com/?allclassifieds.page.' + page.to_s
 	
 	puts "start page " + page.to_s
@@ -31,7 +33,6 @@ pages_to_iterate.times.each do |i|
 		print "."
 	end
 
-	
 
 	puts "\nscanning phone numbers"
 
@@ -39,9 +40,8 @@ pages_to_iterate.times.each do |i|
 		print "."
 		browser.goto link
 		phone_number << browser.text.scan(/(?=(01|\+60))(((?:[0-9]( |-)?){7,10}[0-9]|\d{7,10}))/m).flatten - [nil] - ["-"] - ["01"] - ["0"] - [" "]
+		sleep(5)
 	end
-
-	puts "\nscanning phone numbers"
 
 	phone_number.flatten!.sort!
 
@@ -52,10 +52,9 @@ pages_to_iterate.times.each do |i|
 
 	phone_number.uniq!
 
-	CSV.open("phonenumber.csv", "w") { |csv| csv << phone_number}
-	page = page + 1
-
+	CSV.open("phonenumber.csv", "a") { |csv| csv.puts phone_number}
 	puts "finish page " + page.to_s
+	page = page + 1
 end
 
 
